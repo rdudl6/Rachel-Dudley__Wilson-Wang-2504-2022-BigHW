@@ -1,0 +1,41 @@
+function real_roots_of_quadratic(a::Number, b::Number, c::Number)
+
+    #Start by initializing an empty array
+    roots::Array{Float64} = []
+
+    #Compute the discriminant 
+    Δ = b^2 - 4a*c #\Delta + [TAB]
+
+    #Based on the sign of the discriminant return 0, 1, or 2 roots.
+    if Δ < 0 
+        roots = []
+    elseif Δ == 0
+        roots = [-b/(2a)]
+    else
+        roots = [-b + √Δ, -b - √Δ] / (2a) #\sqrt + [TAB]
+    end
+    return roots 
+end
+
+#Attempting on -x²+5x-6=0
+real_roots_of_quadratic(0 ,5,-6)
+
+using Random
+"""
+This function generates `num_tests` random triples of coefficients and checks that the function `real_roots_of_quadratic()` does its job. The return value is `true` if the test passed, otherwise it is `false`.
+"""
+function test_real_roots_of_quadratic(;num_tests = 10000, seed=42)
+    Random.seed!(seed)
+    test_passed = true
+    for _ in 1:num_tests
+        a, b, c = 2000rand(3) .- 1000 #uniform values in the range [-1000, 1000]
+        roots = real_roots_of_quadratic(a,b,c)
+        for x in roots
+            err = a*x^2 + b*x + c 
+            test_passed = (test_passed && isapprox(err, 0.0, atol = 1e-8)) 
+        end
+    end
+    return test_passed
+end
+
+test_real_roots_of_quadratic() ? println("Test passed") : println("Test failed")
